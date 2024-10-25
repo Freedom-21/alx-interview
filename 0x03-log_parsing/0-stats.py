@@ -1,5 +1,7 @@
 #!/usr/bin/python3
-"""interview questions: Log parsing"""
+"""
+Log parsing
+"""
 
 import sys
 
