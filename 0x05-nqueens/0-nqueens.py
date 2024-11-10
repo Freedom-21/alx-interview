@@ -1,48 +1,48 @@
 #!/usr/bin/python3
-"""The program solves the N queens problem """
+"""The code solves the n-queens challenge"""
 
-from sys import argv
+import sys
 
 
-def is_NQueen(cell: list) -> bool:
-    """ False if not N Queen, True if N Queen """
-    row_number = len(cell) - 1
-    difference = 0
-    for index in range(0, row_number):
-        difference = cell[index] - cell[row_number]
-        if difference < 0:
-            difference *= -1
-        if difference == 0 or difference == row_number - index:
+def print_solution(solution):
+    """Print a solution in the required format."""
+    print(solution)
+
+def is_safe(queens, row, col):
+    """Check if a queen can be placed at (row, col)
+       without being attacked."""
+    for r, c in queens:
+        if c == col or abs(r - row) == abs(c - col):
             return False
     return True
 
+def solve_nqueens(N):
+    """Find all solutions to the N-Queens problem."""
+    solutions = []
+    def backtrack(row, queens):
+        if row == N:
+            solutions.append(queens[:])
+            return
+        for col in range(N):
+            if is_safe(queens, row, col):
+                queens.append([row, col])
+                backtrack(row + 1, queens)
+                queens.pop()
+    backtrack(0, [])
+    for solution in solutions:
+        print_solution(solution)
 
-def solve_NQueens(dimension: int, row: int, cell: list, output: list):
-    """ Return result of N Queens recursively """
-    if row == dimension:
-        print(output)
-    else:
-        for column in range(0, dimension):
-            cell.append(column)
-            output.append([row, column])
-            if (is_NQueen(cell)):
-                solve_NQueens(dimension, row + 1, cell, output)
-            cell.pop()
-            output.pop()
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: nqueens N")
+        sys.exit(1)
+    try:
+        N = int(sys.argv[1])
+    except ValueError:
+        print("N must be a number")
+        sys.exit(1)
+    if N < 4:
+        print("N must be at least 4")
+        sys.exit(1)
+    solve_nqueens(N)
 
-
-if len(argv) != 2:
-    print('Usage: nqueens N')
-    exit(1)
-try:
-    N = int(argv[1])
-except BaseException:
-    print('N must be a number')
-    exit(1)
-if N < 4:
-    print('N must be at least 4')
-    exit(1)
-else:
-    output = []
-    cell = 0
-    solve_NQueens(int(N), cell, [], output)
