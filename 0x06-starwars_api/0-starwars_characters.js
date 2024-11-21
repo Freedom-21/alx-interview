@@ -44,4 +44,3 @@ request(apiUrl, async (error, response, body) => {
     });
   }
 });
-
