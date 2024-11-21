@@ -1,6 +1,6 @@
 #!/usr/bin/node
 /*
- * Script to print all characters of a Star Wars movie.
+ * Script to print all characters of a Star Wars movie in the correct order.
  * The Movie ID is given as the first positional argument.
  * Usage example: ./0-starwars_characters.js 3
  */
@@ -11,7 +11,7 @@ const movieId = process.argv[2];
 const apiUrl = `https://swapi-api.hbtn.io/api/films/${movieId}/`;
 
 // Make an API request to get the film details
-request(apiUrl, (error, response, body) => {
+request(apiUrl, async (error, response, body) => {
   if (error) {
     console.error('Error:', error);
     return;
@@ -25,19 +25,23 @@ request(apiUrl, (error, response, body) => {
   const filmData = JSON.parse(body);
   const characterUrls = filmData.characters;
 
-  // Fetch and print each character in order
-  characterUrls.forEach((characterUrl) => {
-    request(characterUrl, (charError, charResponse, charBody) => {
-      if (charError) {
-        console.error('Error:', charError);
-        return;
-      }
+  // Iterate over character URLs and make requests in sequence
+  for (const url of characterUrls) {
+    await new Promise((resolve) => {
+      request(url, (charError, charResponse, charBody) => {
+        if (charError) {
+          console.error('Error:', charError);
+          resolve();
+          return;
+        }
 
-      if (charResponse.statusCode === 200) {
-        const characterData = JSON.parse(charBody);
-        console.log(characterData.name);
-      }
+        if (charResponse.statusCode === 200) {
+          const characterData = JSON.parse(charBody);
+          console.log(characterData.name);
+        }
+        resolve();
+      });
     });
-  });
+  }
 });
 
