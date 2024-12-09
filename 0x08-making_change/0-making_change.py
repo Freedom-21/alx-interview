@@ -3,6 +3,7 @@
 Module for making change
 """
 
+
 def makeChange(coins, total):
     """
     Determines the fewest number of coins needed to meet a given total.
@@ -13,7 +14,7 @@ def makeChange(coins, total):
 
     Returns:
         int: Fewest number of coins needed to meet the total.
-             Returns -1 if the total cannot be met by any combination of the coins.
+             Returns -1 if the total cannot be met by any combination
     """
     if total <= 0:
         return 0
