@@ -3,55 +3,46 @@
 
 
 def isWinner(x, nums):
-    """defining a function to get who has won in prime game"""
-    mariaWinsCount = 0
-    benWinsCount = 0
+    """Determine the winner of the prime game over multiple rounds."""
+    if x < 1 or not nums:
+        return None
 
-    for num in nums:
-        roundsSet = list(range(1, num + 1))
-        primesSet = primes_in_range(1, num)
+    max_num = max(nums)
+    primes = sieve_of_eratosthenes(max_num)
 
-        if not primesSet:
-            benWinsCount += 1
+    maria_wins = 0
+    ben_wins = 0
+
+    for n in nums[:x]:
+        if n < 2:
+            ben_wins += 1
             continue
 
-        isMariaTurns = True
+        prime_count = count_primes_up_to(primes, n)
 
-        while(True):
-            if not primesSet:
-                if isMariaTurns:
-                    benWinsCount += 1
-                else:
-                    mariaWinsCount += 1
-                break
+        if prime_count % 2 == 1:
+            maria_wins += 1
+        else:
+            ben_wins += 1
 
-            smallestPrime = primesSet.pop(0)
-            roundsSet.remove(smallestPrime)
-
-            roundsSet = [x for x in roundsSet if x % smallestPrime != 0]
-
-            isMariaTurns = not isMariaTurns
-
-    if mariaWinsCount > benWinsCount:
-        return "Winner: Maria"
-
-    if mariaWinsCount < benWinsCount:
-        return "Winner: Ben"
-
+    if maria_wins > ben_wins:
+        return "Maria"
+    if ben_wins > maria_wins:
+        return "Ben"
     return None
 
 
-def is_prime(n):
-    """Returns True if n is prime, else False."""
-    if n < 2:
-        return False
-    for i in range(2, int(n ** 0.5) + 1):
-        if n % i == 0:
-            return False
-    return True
+def sieve_of_eratosthenes(limit):
+    """Generate a list indicating prime status for numbers up to limit."""
+    sieve = [True] * (limit + 1)
+    sieve[0:2] = [False, False]
+    for current in range(2, int(limit**0.5) + 1):
+        if sieve[current]:
+            for multiple in range(current*current, limit + 1, current):
+                sieve[multiple] = False
+    return sieve
 
 
-def primes_in_range(start, end):
-    """Returns a list of prime numbers between start and end (inclusive)."""
-    primes = [n for n in range(start, end+1) if is_prime(n)]
-    return primes
+def count_primes_up_to(primes_sieve, n):
+    """Count the number of primes up to n using the sieve."""
+    return sum(primes_sieve[:n+1])
